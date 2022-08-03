@@ -1,21 +1,52 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {React, useState, useEffect} from 'react';
+import {View, Button} from 'react-native';
 
-export default function App() {
+const YourApp = () => {
+  const [isActive, setIsActive] = useState(false);
+  
+  let Pressed = false;
+  const get_server = async () => {
+    await console.log("Running get Server")
+    await fetch(
+      'https://telegraph-edw.herokuapp.com/receive'
+    ).then((response) => response.json())
+    .then((json) => {
+      setIsActive(json["0"]);
+    })
+  }
+  const send_data = (state) => {
+    fetch('https://telegraph-edw.herokuapp.com/update',{
+    method:'POST',
+      headers:{
+        'content-type': 'application/json'
+      },
+      body:JSON.stringify({
+        "room": 0,
+        "state": state
+      })
+  })
+}
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      get_server();
+    }, 500)
+    return () => clearInterval(interval)
+  });
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" , backgroundColor: isActive ? 'salmon' : 'white', color: isActive ? 'white' : 'salmon',}}>
+      <Button
+      title="Send"
+      onPress={ () => {
+        console.log("Pressed")
+        Pressed = !Pressed;
+        setIsActive(Pressed)
+        send_data(Pressed);
+      } }
+      />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default YourApp;

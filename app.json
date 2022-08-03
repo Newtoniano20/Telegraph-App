@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AwesomeProject",
-    "slug": "AwesomeProject",
+    "name": "Telegraph",
+    "slug": "Telegraph",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
